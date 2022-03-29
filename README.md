@@ -28,4 +28,7 @@
 
 
 
-<img src="C:\Users\82109\AppData\Roaming\Typora\typora-user-images\image-20220329221411843.png" alt="image-20220329221411843" style="zoom:80%;" />
+![1](https://user-images.githubusercontent.com/71081825/160621326-8cee2e6b-6197-4717-878b-ed46ef9f2d0d.png)
+![2](https://user-images.githubusercontent.com/71081825/160621399-00df24f7-9fb9-42cc-877b-18ffd135fa8c.png)
+![2-Clear](https://user-images.githubusercontent.com/71081825/160621401-54ed11e9-4f75-48ad-a74b-18bc904d3695.png)
+![2-Collison](https://user-images.githubusercontent.com/71081825/160621404-6f258b2b-4be5-4af4-90c1-3185052d8501.png)
