@@ -26,9 +26,38 @@
 
 * 예상 게임의 흐름
 
+  - 게임 진행시 개구리 두 마리와 버튼 두 개 , 방해 요소들이 존재한다.![1](https://user-images.githubusercontent.com/71081825/160621326-8cee2e6b-6197-4717-878b-ed46ef9f2d0d.png)
 
+  -  각 개구리들은 방해요소들을 피해 버튼을 누른다.![2](https://user-images.githubusercontent.com/71081825/160621399-00df24f7-9fb9-42cc-877b-18ffd135fa8c.png)
 
-![1](https://user-images.githubusercontent.com/71081825/160621326-8cee2e6b-6197-4717-878b-ed46ef9f2d0d.png)
-![2](https://user-images.githubusercontent.com/71081825/160621399-00df24f7-9fb9-42cc-877b-18ffd135fa8c.png)
-![2-Clear](https://user-images.githubusercontent.com/71081825/160621401-54ed11e9-4f75-48ad-a74b-18bc904d3695.png)
-![2-Collison](https://user-images.githubusercontent.com/71081825/160621404-6f258b2b-4be5-4af4-90c1-3185052d8501.png)
+  - 방해 요소에 부딪히게 될 경우 초기 위치로 강제 이동 된다.![2-Collison](https://user-images.githubusercontent.com/71081825/160621404-6f258b2b-4be5-4af4-90c1-3185052d8501.png)
+
+  - 방해요소들을 피해 두개의 버튼을 모두 누르게 될 경우 해당 스테이지를 클리어한다.![2-Clear](https://user-images.githubusercontent.com/71081825/160621401-54ed11e9-4f75-48ad-a74b-18bc904d3695.png)
+
+    
+
+* 개발 일정
+  * 1 주차 (4/4 시작)
+    - 게임 제작 리소스 수집
+  * 2 주차
+    * 게임 제작 리소스 수집 
+    * 로비 게임 UI 제작
+    * 플레이어 이동 구현
+  * 3 주차
+    * 몬스터 구현 및 배치
+    * 장애물 구현 및 배치
+  * 4 주차
+    * 게임 이펙트 구현
+    * 충돌 처리 구현
+  * 5 주차
+    * 게임 음향 삽입
+    * 랭킹 화면 제작
+  * 6 주차
+    * 인 게임 진행 UI 제작
+  * 7 주차
+    * 랭킹 UI제작, 스마트폰 연동
+  * 8 주차
+    * 게임 오류 검출 및 수정
+  * 9 주차
+    * 게임 오류 검출 및 수정
+    * 발표 
