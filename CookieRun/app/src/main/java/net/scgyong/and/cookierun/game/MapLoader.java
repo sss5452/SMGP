@@ -117,11 +117,25 @@ public class MapLoader implements GameObject {
     private void createObject(char ch, float leftUnit, float topUnit) {
         MainGame game = MainGame.get();
         if (ch >= '1' && ch <= '9') {
-            JellyItem item = JellyItem.get(ch - '1', leftUnit, topUnit);
-            game.add(MainGame.Layer.item.ordinal(), item);
+            Obstacle obs = Obstacle.get(ch - '1', leftUnit, topUnit);
+            game.add(MainGame.Layer.Obstacle.ordinal(), obs);
         } else if (ch >= 'O' && ch <= 'Q') {
             Platform platform = Platform.get(Platform.Type.values()[ch - 'O'], leftUnit, topUnit);
             game.add(MainGame.Layer.platform.ordinal(), platform);
+        }
+    }
+
+    public void deleteObject()
+    {
+        MainGame game = MainGame.get();
+        ArrayList<GameObject> platforms = game.objectsAt(MainGame.Layer.platform.ordinal());
+        for (GameObject obj: platforms) {
+            game.remove(obj);
+        }
+
+        ArrayList<GameObject> obstacles = game.objectsAt(MainGame.Layer.Obstacle.ordinal());
+        for (GameObject obj: obstacles) {
+            game.remove(obj);
         }
     }
 

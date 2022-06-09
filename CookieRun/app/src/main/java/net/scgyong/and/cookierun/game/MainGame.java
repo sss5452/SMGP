@@ -1,15 +1,23 @@
 package net.scgyong.and.cookierun.game;
 
+import android.view.MotionEvent;
+
+import androidx.constraintlayout.widget.ConstraintSet;
+
 import net.scgyong.and.cookierun.R;
 import net.scgyong.and.cookierun.framework.game.BaseGame;
 import net.scgyong.and.cookierun.framework.objects.Button;
 import net.scgyong.and.cookierun.framework.objects.HorzScrollBackground;
 import net.scgyong.and.cookierun.framework.res.Metrics;
 
+import java.lang.reflect.Modifier;
+
 public class MainGame extends BaseGame {
     public static final String PARAM_STAGE_INDEX = "stage_index";
     private static final String TAG = MainGame.class.getSimpleName();
-    private Player player;
+
+    private Player playerRed;
+    private Player playerBlue;
 
     public static MainGame get() {
         if (singleton == null) {
@@ -18,7 +26,7 @@ public class MainGame extends BaseGame {
         return (MainGame)singleton;
     }
     public enum Layer {
-        bg, platform, item, player, ui, touchUi, controller, COUNT
+        bg, platform, Obstacle, player, ui, touchUi, controller, COUNT
     }
 
     public float size(float unit) {
@@ -31,72 +39,105 @@ public class MainGame extends BaseGame {
 
     protected int mapIndex;
 
+    public void setStage(int index)
+    {
+        MapLoader mapLoader = MapLoader.get();
+        mapLoader.deleteObject();
+        mapLoader.init(index);
+        playerRed.InitPlayer();
+        playerBlue.InitPlayer();
+
+    }
+
+
     public void init() {
         super.init();
-
         initLayers(Layer.COUNT.ordinal());
 
 //        Sprite player = new Sprite(
 //                size(2), size(7),
 //                size(2), size(2),
 //                R.mipmap.cookie);
-        player = new Player(
-                size(1), size(1),
-                size(1), size(1)
+        playerRed = new Player(
+                size(1), size(6),
+                size(1*0.9f), size(1 * 0.9f), Player.PlayerType.Red
         );
-        add(Layer.player.ordinal(), player);
+        playerBlue = new Player(
+                size(3), size(6),
+                size(1*0.9f), size(1*0.9f),Player.PlayerType.Blue
+        );
+        add(Layer.player.ordinal(), playerRed);
+        add(Layer.player.ordinal(), playerBlue);
 
         //배경
-        //add(Layer.bg.ordinal(), new HorzScrollBackground(R.mipmap.cookie_run_bg_1, Metrics.size(R.dimen.bg_scroll_1)));
-        //add(Layer.bg.ordinal(), new HorzScrollBackground(R.mipmap.cookie_run_bg_2, Metrics.size(R.dimen.bg_scroll_2)));
-        //add(Layer.bg.ordinal(), new HorzScrollBackground(R.mipmap.cookie_run_bg_3, Metrics.size(R.dimen.bg_scroll_3)));
-
+        add(Layer.bg.ordinal(), new HorzScrollBackground(R.mipmap.background_grass, Metrics.size(R.dimen.bg_scroll_1)));
         //맵 오브젝트
         MapLoader mapLoader = MapLoader.get();
         mapLoader.init(mapIndex);
         add(Layer.controller.ordinal(), mapLoader);
         //add(Layer.controller.ordinal(), new CollisionChecker(player));
 
-        float btn_x = size(1.5f);
+        float btn_x = size(2.5f);
         float btn_y = size(8.75f);
-        float btn_w = size(8.0f / 3.0f);
-        float btn_h = size(1.0f);
+        float btn_w = size(8.0f / 2.0f);
+        float btn_h = size(1.5f);
 
 
         add(Layer.touchUi.ordinal(), new Button(
-                btn_x, btn_y, btn_w, btn_h, R.mipmap.btn_jump_n, R.mipmap.btn_jump_p,
+                btn_x, btn_y, btn_w, btn_h, R.mipmap.bt_nomal, R.mipmap.bt_press,
                 new Button.Callback() {
             @Override
-            public boolean onTouch(Button.Action action) {
-                if (action != Button.Action.pressed) return false;
-                player.jump();
+            public boolean onTouch(Button.Action action,boolean pressed) {
+                if(action == Button.Action.moveLeft)
+                {
+                    playerBlue.setmovedir(1);
+                }
+                else if(action == Button.Action.moveRight)
+                {
+                    playerBlue.setmovedir(2);
+                }
+                else if(action == Button.Action.released)
+                {
+                    playerBlue.setmovedir(0);
+                    playerBlue.jump();
+                }
                 return true;
             }
         }));
 
         add(Layer.touchUi.ordinal(), new Button(
-                Metrics.width - btn_x, btn_y, btn_w, btn_h, R.mipmap.btn_slide_n, R.mipmap.btn_slide_p,
+                Metrics.width - btn_x, btn_y, btn_w, btn_h, R.mipmap.bt_nomal, R.mipmap.bt_press,
                 new Button.Callback() {
             @Override
-            public boolean onTouch(Button.Action action) {
-
-               if (action != Button.Action.pressed) return false;
-                player.move(action == Button.Action.pressed);
+            public boolean onTouch(Button.Action action,boolean pressed) {
+                if(action == Button.Action.moveLeft)
+                {
+                    playerRed.setmovedir(1);
+                }
+                else if(action == Button.Action.moveRight)
+                {
+                    playerRed.setmovedir(2);
+                }
+                else if(action == Button.Action.released)
+                {
+                    playerRed.setmovedir(0);
+                    playerRed.jump();
+                }
                 return true;
             }
         }));
 
 
-        add(Layer.touchUi.ordinal(), new Button(
-                btn_x + btn_w, btn_y, btn_w, btn_h, R.mipmap.btn_fall_n, R.mipmap.btn_fall_p,
-                new Button.Callback() {
-            @Override
-            public boolean onTouch(Button.Action action) {
-                if (action != Button.Action.pressed) return false;
-                player.fall();
-                return true;
-            }
-        }));
+//        add(Layer.touchUi.ordinal(), new Button(
+//                btn_x + btn_w, btn_y, btn_w, btn_h, R.mipmap.btn_fall_n, R.mipmap.btn_fall_p,
+//                new Button.Callback() {
+//            @Override
+//            public boolean onTouch(Button.Action action) {
+//                if (action != Button.Action.pressed) return false;
+//                player.fall();
+//                return true;
+//            }
+//        }));
     }
 
     @Override

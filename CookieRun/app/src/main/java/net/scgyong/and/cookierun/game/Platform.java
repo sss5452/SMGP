@@ -1,34 +1,47 @@
 package net.scgyong.and.cookierun.game;
 
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.RectF;
+
 import net.scgyong.and.cookierun.R;
 import net.scgyong.and.cookierun.framework.game.RecycleBin;
+import net.scgyong.and.cookierun.framework.interfaces.GameObject;
 import net.scgyong.and.cookierun.framework.res.BitmapPool;
+import net.scgyong.and.cookierun.framework.res.Metrics;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Platform extends MapSprite {
     private Type type;
+    protected Rect srcRect = new Rect();
+    private  float  hh =1;
+    private  float left;
+    private  float top;
+    public   boolean isPress = false;
+    protected RectF collisionBox = new RectF();
 
     public boolean canPass() {
-        return type != Type.T_10x2;
+        return type != Type.Ground;
     }
 
     public enum Type {
-        T_10x2, T_2x2, T_3x1, COUNT;
+        Ground, Button, Plat, COUNT;
         float width() {
             int w = 1;
             switch (this) {
-                case T_10x2: w = 10; break;
-                case T_2x2: w = 2; break;
-                case T_3x1: w = 3; break;
+                case Ground: w = 20; break;
+                case Button: w = 2; break;
+                case Plat: w = 3; break;
             }
             return MainGame.get().size(w);
         }
         float height() {
             int h = 1;
             switch (this) {
-                case T_10x2: case T_2x2: h = 2; break;
-                case T_3x1: h = 1; break;
+                case Ground: case Button: h = 2; break;
+                case Plat: h = 1; break;
             }
             return MainGame.get().size(h);
         }
@@ -42,7 +55,7 @@ public class Platform extends MapSprite {
     }
     protected static int[] BITMAP_IDS = {
             R.mipmap.block_grass,
-            R.mipmap.block_grass,
+            R.mipmap.button,
             R.mipmap.block_grass,
     };
     public static Platform get(Type type, float unitLeft, float unitTop) {
@@ -56,13 +69,66 @@ public class Platform extends MapSprite {
 
     private Platform() {
     }
+    public Type getType()
+    {
+        return type;
+    }
+
+    public void pushButton(boolean push){
+        if(push) {
+            dstRect.set(left, top + 10, left + type.width() / 1.5f, top + type.height() / 3.f);
+            srcRect.set(138, 0, 300, 65);
+            setBoundingRect(dstRect);
+            isPress = true;
+
+            int pushCount = 0;
+            MainGame game = MainGame.get();
+            ArrayList<GameObject> platforms = game.objectsAt(MainGame.Layer.platform.ordinal());
+            for (GameObject obj: platforms) {
+                Platform platform = (Platform) obj;
+                if(platform.type == Type.Button){
+                    if(platform.isPress) pushCount++;
+                }
+            }
+            if(pushCount==2)
+            {
+               // game.setMapIndex(1);
+                game.setStage(1);
+            }
+        }
+        else{
+            srcRect.set(0,0,bitmap.getWidth()/2,bitmap.getHeight());
+            dstRect.set(left, top, left + type.width()/1.5f, top + type.height()/3.f);
+            setBoundingRect(dstRect);
+            isPress = false;
+        }
+
+    }
+
+    public boolean getIsPress()
+    {
+        return isPress;
+    }
+    @Override
+    public void draw(Canvas canvas) {
+        canvas.drawBitmap(bitmap, srcRect, dstRect, null);
+    }
 
     private void init(Type type, float unitLeft, float unitTop) {
         this.type = type;
         bitmap = BitmapPool.get(type.bitmapId());
         MainGame game = MainGame.get();
-        float left = game.size(unitLeft);
-        float top = game.size(unitTop);
-        dstRect.set(left, top, left + type.width(), top + type.height());
+         left = game.size(unitLeft);
+         if(type == Type.Button)
+            top = game.size(unitTop/0.7f);
+        else top = game.size(unitTop);
+
+        if(type == Type.Button){
+            srcRect.set(0,0,bitmap.getWidth()/2,bitmap.getHeight());
+        }
+        else {
+            srcRect.set(0,0,bitmap.getWidth(),bitmap.getHeight());
+        }
+        dstRect.set(left, top, left + type.width()/1.5f, top + type.height()/3f);
     }
 }

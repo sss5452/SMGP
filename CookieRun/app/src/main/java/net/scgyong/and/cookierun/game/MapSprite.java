@@ -16,13 +16,13 @@ public class MapSprite extends Sprite implements Recyclable, BoxCollidable {
 
     @Override
     public void update(float frameTime) {
-        float speed = MapLoader.get().speed;
-        float dx = speed * frameTime;
-       // dstRect.offset(dx, 0);
-        if (dstRect.right < 0) {
-//            Log.d(TAG, "Removing:" + this);
-            BaseGame.getInstance().remove(this);
-        }
+//        float speed = MapLoader.get().speed;
+//        float dx = speed * frameTime;
+//         dstRect.offset(dx, 0);
+//        if (dstRect.right < 0) {
+////            Log.d(TAG, "Removing:" + this);
+//            BaseGame.getInstance().remove(this);
+//        }
     }
 
     @Override
@@ -33,4 +33,5 @@ public class MapSprite extends Sprite implements Recyclable, BoxCollidable {
     public RectF getBoundingRect() {
         return dstRect;
     }
+    public void setBoundingRect(RectF m_dst){ dstRect = m_dst;}
 }
