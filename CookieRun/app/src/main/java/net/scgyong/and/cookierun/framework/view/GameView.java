@@ -1,3 +1,4 @@
+
 package net.scgyong.and.cookierun.framework.view;
 
 import android.app.Activity;
@@ -59,7 +60,7 @@ public class GameView extends View implements Choreographer.FrameCallback {
         if (elapsed != 0) {
             framesPerSecond = 1_000_000_000 / elapsed;
             lastTimeNanos = now;
-            BaseGame game = BaseGame.getInstance();
+            BaseGame game = BaseGame.getTopScene();
             game.update(elapsed);
             invalidate();
         }
@@ -67,22 +68,19 @@ public class GameView extends View implements Choreographer.FrameCallback {
     }
 
     private void initView() {
-        BaseGame.getInstance().init();
+        BaseGame.getTopScene().init();
         fpsPaint.setColor(Color.BLUE);
         fpsPaint.setTextSize(100);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return BaseGame.getInstance().onTouchEvent(event);
+        return BaseGame.getTopScene().onTouchEvent(event);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        BaseGame.getInstance().draw(canvas);
-
-        canvas.drawText("FPS:" + framesPerSecond, framesPerSecond * 10, 100, fpsPaint);
-        canvas.drawText("" + BaseGame.getInstance().objectCount(), 10, 100, fpsPaint);
+        BaseGame.getTopScene().draw(canvas);
     }
 
     public void pauseGame() {
@@ -107,5 +105,9 @@ public class GameView extends View implements Choreographer.FrameCallback {
             context = ((ContextWrapper)context).getBaseContext();
         }
         return null;
+    }
+
+    public boolean onBackPressed() {
+        return BaseGame.getTopScene().handleBackKey();
     }
 }

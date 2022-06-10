@@ -27,7 +27,7 @@ public class CollisionChecker implements GameObject {
             }
             if (CollisionHelper.collides(player, (BoxCollidable) obstacle)) {
                     player.InitPlayer();
-                    Sound.playEffect(R.raw.bomb);
+                    Sound.playEffect(R.raw.jelly);
                 ArrayList<GameObject> Players = game.objectsAt(MainGame.Layer.player.ordinal());
                 for( GameObject p : Players) {
                     Player array_player = (Player) p;

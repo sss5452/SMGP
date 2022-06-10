@@ -9,8 +9,7 @@ import net.scgyong.and.cookierun.framework.game.BaseGame;
 import net.scgyong.and.cookierun.framework.objects.Button;
 import net.scgyong.and.cookierun.framework.objects.HorzScrollBackground;
 import net.scgyong.and.cookierun.framework.res.Metrics;
-
-import java.lang.reflect.Modifier;
+import net.scgyong.and.cookierun.framework.res.Sound;
 
 public class MainGame extends BaseGame {
     public static final String PARAM_STAGE_INDEX = "stage_index";
@@ -18,12 +17,12 @@ public class MainGame extends BaseGame {
 
     private Player playerRed;
     private Player playerBlue;
-
+    private static MainGame singleton;
     public static MainGame get() {
         if (singleton == null) {
             singleton = new MainGame();
         }
-        return (MainGame)singleton;
+        return singleton;
     }
     public enum Layer {
         bg, platform, Obstacle, player, ui, touchUi, controller, COUNT
@@ -49,15 +48,9 @@ public class MainGame extends BaseGame {
 
     }
 
-
     public void init() {
         super.init();
         initLayers(Layer.COUNT.ordinal());
-
-//        Sprite player = new Sprite(
-//                size(2), size(7),
-//                size(2), size(2),
-//                R.mipmap.cookie);
         playerRed = new Player(
                 size(1), size(6),
                 size(1*0.9f), size(1 * 0.9f), Player.PlayerType.Red
@@ -126,22 +119,32 @@ public class MainGame extends BaseGame {
                 return true;
             }
         }));
-
-
-//        add(Layer.touchUi.ordinal(), new Button(
-//                btn_x + btn_w, btn_y, btn_w, btn_h, R.mipmap.btn_fall_n, R.mipmap.btn_fall_p,
-//                new Button.Callback() {
-//            @Override
-//            public boolean onTouch(Button.Action action) {
-//                if (action != Button.Action.pressed) return false;
-//                player.fall();
-//                return true;
-//            }
-//        }));
+        Sound.playMusic(R.raw.jelly);
+        push(TitleScene.get());
+    }
+    @Override
+    public boolean handleBackKey() {
+        return true;
     }
 
     @Override
     protected int getTouchLayerIndex() {
         return Layer.touchUi.ordinal();
+    }
+
+    @Override
+    public void start() {
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void end() {
     }
 }

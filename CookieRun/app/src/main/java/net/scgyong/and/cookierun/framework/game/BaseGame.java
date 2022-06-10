@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.text.method.Touch;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import net.scgyong.and.cookierun.BuildConfig;
@@ -18,22 +18,69 @@ import net.scgyong.and.cookierun.framework.interfaces.Touchable;
 import net.scgyong.and.cookierun.framework.view.GameView;
 
 public class BaseGame {
-    protected static BaseGame singleton;
+    private static final String TAG = BaseGame.class.getSimpleName();
     protected float frameTime, elapsedTime;
 
-    public static BaseGame getInstance() {
-//        if (singleton == null) {
-//            singleton = new BaseGame();
-//        }
-        return singleton;
+    public static BaseGame getTopScene() {
+        int lastIndex = sceneStack.size() - 1;
+        if (lastIndex < 0) return null;
+        return sceneStack.get(lastIndex);
     }
 
     public static void clear() {
-        singleton = null;
+        while (sceneStack.size() > 0) {
+            BaseGame scene = sceneStack.remove(0);
+            scene.end();
+        }
+        sceneStack.clear();
     }
 
     protected ArrayList<ArrayList<GameObject>> layers;
     protected Paint collisionPaint;
+
+    protected static ArrayList<BaseGame> sceneStack = new ArrayList<>();
+    //    public Scene getTopScene() {
+//    }
+    public static void start(BaseGame scene) {
+        int lastIndex = sceneStack.size() - 1;
+        if (lastIndex >= 0) {
+            BaseGame top = sceneStack.remove(lastIndex);
+            Log.d(TAG, "Ending(in start): " + top);
+            top.end();
+            sceneStack.set(lastIndex, scene);
+        } else {
+            sceneStack.add(scene);
+        }
+        Log.d(TAG, "Starting(in start): " + scene);
+        scene.start();
+    }
+    public static void push(BaseGame scene) {
+        int lastIndex = sceneStack.size() - 1;
+        if (lastIndex >= 0) {
+            BaseGame top = sceneStack.get(lastIndex);
+            Log.d(TAG, "Pausing: " + top);
+            top.pause();
+        }
+        sceneStack.add(scene);
+        Log.d(TAG, "Starting(in push): " + scene);
+        scene.start();
+    }
+    public static void popScene() {
+        int lastIndex = sceneStack.size() - 1;
+        if (lastIndex >= 0) {
+            BaseGame top = sceneStack.remove(lastIndex);
+            Log.d(TAG, "Ending(in pop): " + top);
+            top.end();
+        }
+        lastIndex--;
+        if (lastIndex >= 0) {
+            BaseGame top = sceneStack.get(lastIndex);
+            Log.d(TAG, "Resuming: " + top);
+            top.resume();
+        } else {
+            Log.e(TAG, "should end app in popScene()");
+        }
+    }
 
     public void init() {
         if (BuildConfig.showsCollisionBox) {
@@ -44,6 +91,12 @@ public class BaseGame {
 
         elapsedTime = 0;
     }
+
+    public boolean isTransparent() { return false; }
+    public void start(){}
+    public void pause(){}
+    public void resume(){}
+    public void end(){}
 
     protected void initLayers(int count) {
         layers = new ArrayList<>();
@@ -63,17 +116,25 @@ public class BaseGame {
     }
 
     public void draw(Canvas canvas) {
+        draw(canvas, sceneStack.size() - 1);
+    }
+    protected void draw(Canvas canvas, int index) {
+        BaseGame scene = sceneStack.get(index);
+        if (scene.isTransparent() && index > 0) {
+            draw(canvas, index - 1);
+        }
+        ArrayList<ArrayList<GameObject>> layers = scene.layers;
         for (ArrayList<GameObject> gameObjects : layers) {
             for (GameObject gobj : gameObjects) {
                 gobj.draw(canvas);
             }
         }
         if (BuildConfig.showsCollisionBox) {
-            drawBoxCollidables(canvas);
+            drawBoxCollidables(canvas, layers);
         }
     }
 
-    public void drawBoxCollidables(Canvas canvas) {
+    public void drawBoxCollidables(Canvas canvas, ArrayList<ArrayList<GameObject>> layers) {
         for (ArrayList<GameObject> gameObjects : layers) {
             for (GameObject gobj : gameObjects) {
                 if (gobj instanceof BoxCollidable) {
@@ -102,7 +163,9 @@ public class BaseGame {
                     boolean removed = gameObjects.remove(gameObject);
                     if (!removed) continue;
                     if (gameObject instanceof Recyclable) {
-                        RecycleBin.add((Recyclable) gameObject);
+                        Recyclable recyclable = (Recyclable) gameObject;
+                        recyclable.finish();
+                        RecycleBin.add(recyclable);
                     }
                     break;
                 }
@@ -133,6 +196,7 @@ public class BaseGame {
     }
 
     public int objectCount() {
+        if (layers == null) return 0;
         int count = 0;
         for (ArrayList<GameObject> gameObjects : layers) {
             count += gameObjects.size();
@@ -142,5 +206,9 @@ public class BaseGame {
 
     public void finish() {
         GameView.view.getActivity().finish();
+    }
+
+    public boolean handleBackKey() {
+        return false;
     }
 }
