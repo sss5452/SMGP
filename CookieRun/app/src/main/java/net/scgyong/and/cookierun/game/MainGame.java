@@ -35,14 +35,16 @@ public class MainGame extends BaseGame {
     public void setMapIndex(int mapIndex) {
         this.mapIndex = mapIndex;
     }
-
+    public int setMapIndexUp() { return this.mapIndex++;}
+    public int GetMapIndex() {return  this.mapIndex;}
     protected int mapIndex;
+    private int mapcount;
 
-    public void setStage(int index)
+    public void nextStage()
     {
         MapLoader mapLoader = MapLoader.get();
         mapLoader.deleteObject();
-        mapLoader.init(index);
+        mapLoader.init(++mapcount);
         playerRed.InitPlayer();
         playerBlue.InitPlayer();
 
@@ -119,7 +121,7 @@ public class MainGame extends BaseGame {
                 return true;
             }
         }));
-        Sound.playMusic(R.raw.jelly);
+        mapIndex = 0;
         push(TitleScene.get());
     }
     @Override
@@ -134,6 +136,7 @@ public class MainGame extends BaseGame {
 
     @Override
     public void start() {
+        mapcount = 0;
     }
 
     @Override

@@ -30,24 +30,23 @@ public class TitleScene extends BaseGame {
         add(Layer.ui.ordinal(), new Sprite(
                 Metrics.width/2, Metrics.height/2,
                 Metrics.width, Metrics.height,
-                R.mipmap.background_grass));
+                R.mipmap.logobg2));
 
-        add(Layer.ui.ordinal(), new Sprite(
-                Metrics.width / 2, Metrics.height / 4,
-                Metrics.width / 1.5f, Metrics.width / 3 * 230 / 440,
-                R.mipmap.strat_p));
+
 
         float btn_width = Metrics.width /9 ;
         float btn_height =  Metrics.height/7 ;
         float btn_x = Metrics.width / 2;
-        float btn_y = Metrics.height / 2 + btn_height / 2;
+        float btn_y = Metrics.height / 2 - btn_height/3;
 
         add(Layer.touchUi.ordinal(), new Button(
                 btn_x, btn_y, btn_width, btn_height, R.mipmap.strat_p, R.mipmap.strat_n,
                 new Button.Callback() {
                     @Override
                     public boolean onTouch(Button.Action action,boolean pressed) {
-                       BaseGame.popScene();
+                        Sound.stopMusic();
+                        BaseGame.popScene();
+                        Sound.playMusic(R.raw.map);
                         return true;
                     }
                 }));
@@ -55,8 +54,7 @@ public class TitleScene extends BaseGame {
     }
     @Override
     public void start() {
-       // Sound.playMusic(R.raw.titlemusic);
-        Sound.playMusic(R.raw.bomb);
+        Sound.playMusic(R.raw.titlemusic);
 
     }
 

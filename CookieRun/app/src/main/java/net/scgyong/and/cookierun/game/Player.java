@@ -109,6 +109,7 @@ public class Player extends SheetSprite implements BoxCollidable {
         save_pos_x = x;
         save_pos_y = y;
         jumpPower = Metrics.size(R.dimen.player_jump_power);
+        moveSpeed = Metrics.size((R.dimen.player_move_speed));
         gravity = Metrics.size(R.dimen.player_gravity);
         setDstRect(w, h);
         setState(State.run);
@@ -140,6 +141,7 @@ public class Player extends SheetSprite implements BoxCollidable {
             case falling:
                 float dy = jumpSpeed * frameTime;
                 jumpSpeed += gravity * frameTime;
+
 //            Log.d(TAG, "y=" + y + " dy=" + dy + " js=" + jumpSpeed);
                 if (jumpSpeed >= 0) {
                     if(state!=State.falling) setState(State.falling);
@@ -167,19 +169,17 @@ public class Player extends SheetSprite implements BoxCollidable {
                 }
                 if( movedir == movestate.left)
                 {
-                    dx = -10;
-                    this.x -= 10;
-
+                    if(dstRect.left > 50) {
+                        dx = -moveSpeed * frameTime;
+                        this.x += dx;
+                    }
                 }
                 if( movedir == movestate.right)
                 {
-
-                     dx = 10;
-                    this.x += 10;
-//                    moveSpeed = 2;
-//                    this.x += 000000.1 * frameTime;
-//                    dstRect.offset(this.x, 0);
-//                    collisionBox.offset(this.x, 0);
+                    if(dstRect.right < Metrics.width) {
+                        dx = moveSpeed * frameTime;
+                        this.x += dx;
+                    }
                 }
 
                 dstRect.offset(dx, dy);
@@ -188,32 +188,32 @@ public class Player extends SheetSprite implements BoxCollidable {
 
             case run:
             case idle:
+                dx = 0;
                 if( movedir == movestate.stop)
                 {
                     break;
                 }
                 if( movedir == movestate.left)
                 {
-                    dstRect.offset( -10, 0);
-                    collisionBox.offset(-10, 0);
-                    this.x -= 10;
-
+                    if(dstRect.left > 50) {
+                        dx = -moveSpeed * frameTime;
+                        this.x += dx;
+                    }
                 }
                 if( movedir == movestate.right)
                 {
-
-                    dstRect.offset( 10, 0);
-                    collisionBox.offset(10, 0);
-                    this.x += 10;
-//                    moveSpeed = 2;
-//                    this.x += 000000.1 * frameTime;
-//                    dstRect.offset(this.x, 0);
-//                    collisionBox.offset(this.x, 0);
+                    if(dstRect.right < Metrics.width) {
+                        dx = moveSpeed * frameTime;
+                        this.x += dx;
+                    }
                 }
+                dstRect.offset( dx, 0);
+                collisionBox.offset(dx, 0);
                  float platformTop = findNearestPlatformTop(foot);
-                if (foot < platformTop) {
+                 if (foot < platformTop) {
                     setState(State.falling);
                     jumpSpeed = 0;
+
                 }
                 break;
         }

@@ -19,7 +19,7 @@ public class GameActivity extends AppCompatActivity {
         int stageIndex = intent.getExtras().getInt(MainGame.PARAM_STAGE_INDEX);
         setContentView(new GameView(this, null));
         MainGame game = MainGame.get();
-        game.setMapIndex(stageIndex);
+        game.setMapIndex(0);
         BaseGame.push(game);
 
     //    TitleScene titleScene = TitleScene.get();

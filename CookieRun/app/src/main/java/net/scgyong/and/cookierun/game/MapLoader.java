@@ -39,7 +39,7 @@ public class MapLoader implements GameObject {
         return instance;
     }
     private static String[] MAP_FILES = {
-            "stage_01.txt", "stage_02.txt",
+            "stage_01.txt", "stage_02.txt","stage_03.txt","stage_04.txt","stage_05.txt"
     };
     public void init(int mapIndex) {
         scroll = 0;
@@ -119,7 +119,7 @@ public class MapLoader implements GameObject {
         if (ch >= '1' && ch <= '9') {
             Obstacle obs = Obstacle.get(ch - '1', leftUnit, topUnit);
             game.add(MainGame.Layer.Obstacle.ordinal(), obs);
-        } else if (ch >= 'O' && ch <= 'Q') {
+        } else if (ch >= 'O' && ch <= 'R') {
             Platform platform = Platform.get(Platform.Type.values()[ch - 'O'], leftUnit, topUnit);
             game.add(MainGame.Layer.platform.ordinal(), platform);
         }

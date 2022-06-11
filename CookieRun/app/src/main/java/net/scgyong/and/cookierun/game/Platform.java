@@ -20,6 +20,7 @@ public class Platform extends MapSprite {
     private  float left;
     private  float top;
     public   boolean isPress = false;
+    private  float downper = 0;
     protected RectF collisionBox = new RectF();
 
     public boolean canPass() {
@@ -27,13 +28,14 @@ public class Platform extends MapSprite {
     }
 
     public enum Type {
-        Ground, Button, Plat, COUNT;
+        Ground, Button, Plat,DownButton, COUNT;
         float width() {
             int w = 1;
             switch (this) {
                 case Ground: w = 20; break;
                 case Button: w = 2; break;
                 case Plat: w = 3; break;
+                case DownButton: w= 2; break;
             }
             return MainGame.get().size(w);
         }
@@ -41,7 +43,7 @@ public class Platform extends MapSprite {
             int h = 1;
             switch (this) {
                 case Ground: case Button: h = 2; break;
-                case Plat: h = 1; break;
+                case Plat: h = 1; break; case DownButton: h =2; break;
             }
             return MainGame.get().size(h);
         }
@@ -57,6 +59,7 @@ public class Platform extends MapSprite {
             R.mipmap.block_grass,
             R.mipmap.button,
             R.mipmap.block_grass,
+            R.mipmap.button,
     };
     public static Platform get(Type type, float unitLeft, float unitTop) {
         Platform platform = (Platform) RecycleBin.get(Platform.class);
@@ -76,7 +79,7 @@ public class Platform extends MapSprite {
 
     public void pushButton(boolean push){
         if(push) {
-            dstRect.set(left, top + 10, left + type.width() / 1.5f, top + type.height() / 3.f);
+            dstRect.set(left, top+downper + 10, left + type.width() / 1.5f, top +downper+ type.height() / 3.f);
             srcRect.set(138, 0, 300, 65);
             setBoundingRect(dstRect);
             isPress = true;
@@ -92,13 +95,12 @@ public class Platform extends MapSprite {
             }
             if(pushCount==2)
             {
-               // game.setMapIndex(1);
-                game.setStage(1);
+                game.nextStage();
             }
         }
         else{
             srcRect.set(0,0,bitmap.getWidth()/2,bitmap.getHeight());
-            dstRect.set(left, top, left + type.width()/1.5f, top + type.height()/3.f);
+            dstRect.set(left, top+downper, left + type.width()/1.5f, top+downper + type.height()/3.f);
             setBoundingRect(dstRect);
             isPress = false;
         }
@@ -117,18 +119,22 @@ public class Platform extends MapSprite {
     private void init(Type type, float unitLeft, float unitTop) {
         this.type = type;
         bitmap = BitmapPool.get(type.bitmapId());
+        if(this.type == Type.DownButton) {
+            this.type = Type.Button;
+            downper = type.height()/4;
+        }
         MainGame game = MainGame.get();
          left = game.size(unitLeft);
-         if(type == Type.Button)
+         if(this.type == Type.Button)
             top = game.size(unitTop/0.7f);
         else top = game.size(unitTop);
 
-        if(type == Type.Button){
+        if(this.type == Type.Button){
             srcRect.set(0,0,bitmap.getWidth()/2,bitmap.getHeight());
         }
         else {
             srcRect.set(0,0,bitmap.getWidth(),bitmap.getHeight());
         }
-        dstRect.set(left, top, left + type.width()/1.5f, top + type.height()/3f);
+        dstRect.set(left, top+downper, left + type.width()/1.5f, top+downper + type.height()/3f);
     }
 }

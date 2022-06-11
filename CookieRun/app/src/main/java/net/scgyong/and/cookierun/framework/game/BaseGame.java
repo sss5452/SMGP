@@ -129,9 +129,7 @@ public class BaseGame {
                 gobj.draw(canvas);
             }
         }
-        if (BuildConfig.showsCollisionBox) {
-            drawBoxCollidables(canvas, layers);
-        }
+
     }
 
     public void drawBoxCollidables(Canvas canvas, ArrayList<ArrayList<GameObject>> layers) {
